@@ -5,10 +5,11 @@ namespace BugTracker.Domain.Users.Entities;
 
 public class User : AuditableEntity
 {
-    public Guid Id { get; set; }
+    [Key, Required]
+    public Guid UserId { get; set; }
     [Required, StringLength(50)]
     public required string FirstName { get; set; }
-    [Required,StringLength(50)]
+    [Required, StringLength(50)]
     public required string LastName { get; set; }
     [StringLength(100)]
     public required string Email { get; set; }

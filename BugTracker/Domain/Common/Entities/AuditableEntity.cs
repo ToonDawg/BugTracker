@@ -10,7 +10,7 @@ public abstract class AuditableEntity
     [Required]
     public DateTime ModifiedDate { get; set; }
     [Required]
-    public Guid ModifiedBy { get; set;}
+    public Guid ModifiedBy { get; set; }
     [Required]
     public bool IsDeleted { get; set; } = false;
 }
