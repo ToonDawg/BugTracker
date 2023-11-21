@@ -1,6 +1,5 @@
 using BugTracker.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-builder.Services.AddDbContext<BugTrackerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("bugTrackerdbConnection")));
+builder.Services.AddDbContext<BugTrackerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("bugTrackerDbConnection")));
 
 var app = builder.Build();
 

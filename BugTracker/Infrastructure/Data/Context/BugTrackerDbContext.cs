@@ -18,16 +18,4 @@ public class BugTrackerDbContext : DbContext
 
     }
 
-    public override int SaveChanges()
-    {
-        UpdateAuditEntries();
-        return base.SaveChanges();
-    }
-
-    private void UpdateAuditEntries()
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
-    }
 }

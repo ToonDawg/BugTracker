@@ -1,11 +1,13 @@
-﻿using BugTracker.Infrastructure.Data.Context;
+﻿using BugTracker.Application.Common;
+using BugTracker.Infrastructure.Data.Context;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugTracker.Application.Users.Queries;
 public record UserDto(Guid UserId, string UserName);
-public record GetUserByIdQuery(Guid UserId) : IRequest<UserDto>;
+public record GetUserByIdQuery(Guid UserId) : IRequest<Result<UserDto>>;
 
-public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>
+public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, Result<UserDto>>
 {
     private BugTrackerDbContext _dbContext;
 
@@ -13,15 +15,18 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto
     {
         _dbContext = dbContext;
     }
-    public async Task<UserDto?> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        var userDto = await _dbContext.Users.FindAsync(request.UserId, cancellationToken);
-        if (userDto == null)
-        {
-            return null;
-        }
-        return new UserDto(UserId: userDto.UserId, UserName: $"{userDto.FirstName} {userDto.LastName}");
+        var userDto = await _dbContext.Users
+            .Where(u => u.UserId == request.UserId)
+            .Select(u => new UserDto(u.UserId, $"{u.FirstName} {u.LastName}"))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return userDto == null
+            ? Result<UserDto>.Failure("User not found.")
+            : Result<UserDto>.Success(userDto);
     }
+
 }
 
 
